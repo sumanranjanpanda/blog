@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<%= render '/refinery/html_tag' %>
+  <% site_bar = render('/refinery/site_bar', :head => true) -%>
+  <%= render '/refinery/head' %>
+  <body>
+    <%= site_bar -%>
+    <%= render '/refinery/ie6check' if request.env['HTTP_USER_AGENT'] =~ /MSIE/ -%>
+      <div id='wrapper'>
+        <div id="blog_container">
+          <div class="blog_part">
+            <%= render '/refinery/header' -%>
+            
+            <div class="blog_left fl" >
+              <%= render '/refinery/left_panel' -%>
+            </div> 
+ 
+            <div class="blog_right">
+              <%= yield %>
+            </div>
+            
+          </div>
+          <!--
+            <div class="copyright fl">
+              <%#= render '/refinery/footer' -%>
+            </div>
+        </div>
+        -->
+      </div>
+    <%= render '/refinery/javascripts' %>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+
+<% if post.live? %>
+  <article class="blog_post" id="<%= dom_id(post) %>" >
+    <header>
+      <div ><%= link_to post.title, refinery.blog_post_path(post), :style=>"font-size:18px;color:#601751;text-decoration:none;font-weight:bold" %></div>
+      <section class='details'>
+ <div class="blog_title_small fl">
+        <time datetime="<%=l post.published_at.to_date, :format => :default %>" class='posted_at fl' >
+          <%= t('created_at', :scope => 'refinery.blog.shared.posts', :when => l(post.published_at.to_date, :format => '%e.%m.%Y')) %>:
+        </time>
+
+        <%= content_tag(:div, "#{t('by', :scope => 'refinery.blog.posts.show')} #{post.author.username}", :class => "blog_author fl", :style => "padding-left:5px") if post.author.present? %>
+    </div>
+    <div class="comment_text fr" >
+        <% if Refinery::Blog::Post.comments_allowed? %>
+          <% if post.comments.any? %>
+             Comments: <%=post.comments.approved.count%>
+          <% end %>
+        <% end %>
+    </div>
+        <% if (categories = post.categories).any? %>
+          <aside class='filed_in'>
+            <%= t('filed_in', :scope => 'refinery.blog.posts.show') %>
+            <%=raw categories.collect { |category| link_to category.title, refinery.blog_category_path(category) }.to_sentence %>
+          </aside>
+        <% end %>        
+      </section>
+    </header>
+    <section class='clearfix'>
+  <div id='gallery'>
+    <%if post.images.count == 2%>
+      <% post.images.each_with_index do |image, index| %>
+        <span>
+          <% if index == 1 %>
+            <%= link_to image_tag(image.thumbnail("350x182#c").url), image.thumbnail("900x600").url %>
+          <% else %>
+            <%= link_to image_tag(image.thumbnail("182x182#c").url), image.thumbnail("900x600").url %>
+          <% end %>
+          <span class='caption'><%=raw post.caption_for_image_index(index) %></span>
+        </span>
+      <% end %>
+    <%elsif post.images.count > 1%>
+      <% post.images.each_with_index do |image, index| %>
+        <% break if index > 2%>
+        <span>
+          <%= link_to image_tag(image.thumbnail("182x182#c").url), image.thumbnail("900x600").url %>
+          <span class='caption'><%=raw post.caption_for_image_index(index) %></span>
+        </span>
+      <% end %>
+    <%elsif post.images.count == 1%>
+        <span>
+          <%= link_to image_tag(post.images.first.thumbnail("560x180#c").url), post.images.first.thumbnail("900x600").url %>
+          <span class='caption'><%=raw post.caption_for_image_index(0) %></span>
+        </span>
+    <%end%>
+   
+  </div>
+      <span style="color:black;">
+      <% if blog_post_teaser_enabled? %>
+        <%= blog_post_teaser(post) %>
+      <% else %>
+        <%= post.body.html_safe %>
+      <% end %>
+      </span>
+
+    </section>
+          <span>
+        <%= link_to t('read_more', :scope => 'refinery.blog.shared.posts'), refinery.blog_post_path(post), :style=>"color:#8D8E90;" if blog_post_teaser_enabled? %>....
+      </span>
+    
+    <div class="title_tag fl">
+        <% if (tags = post.tags).any? %>
+          <div class="blog_title_small fl">
+            Tags:
+            <%=raw tags.collect { |tag| link_to tag, refinery.blog_tagged_posts_path(tag.id, tag.name.parameterize), :style =>"color:#8D8E90;" }.to_sentence %>
+          </div>
+        <% end %>
+      <div class="social_link fr">
+        <a href="#">
+          <%=image_tag "tw_icon.png", :border=>"0" %>
+        </a>
+        <a href="#">
+          <%=image_tag "fb_icon.png", :border=>"0" %>
+        </a>
+        <a href="#">
+          <%=image_tag "p_icon.png", :border=>"0" %>
+        </a>
+        <a href="#">
+          <%=image_tag "o_icon.png", :border=>"0" %>
+        </a>
+      </div>
+    </div>
+    
+  </article>
+<% end %>
+
